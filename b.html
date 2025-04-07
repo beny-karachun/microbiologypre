@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בחן מיקרוביולוגיה - מבנה התא</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&display=swap'); /* Hebrew Font */
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #34495e;
+            --correct-color: #2ecc71;
+            --incorrect-color: #e74c3c;
+            --border-color: #e0e0e0;
+            --button-hover: #2980b9;
+            --font-family: 'Assistant', sans-serif; /* Hebrew Font */
+            --border-radius: 8px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            font-size: 16px;
+            line-height: 1.7; /* Adjusted for Hebrew */
+            text-align: right; /* Default alignment for RTL */
+        }
+
+        .exam-container {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--card-background);
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center; /* Center header text */
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .exam-controls {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f1f3f5;
+             border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+
+         .progress-indicator {
+            font-size: 0.9em;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+
+        main {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        #question-area, #all-questions-area, #results-area {
+            margin-bottom: 25px;
+        }
+
+        .question-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .options-list li {
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            text-align: right; /* Ensure text inside is right-aligned */
+        }
+
+         .options-list li:hover {
+             background-color: #e9ecef;
+         }
+
+         .options-list input[type="radio"] {
+             margin-left: 12px; /* Adjusted for RTL: space is on the left */
+             margin-right: 0; /* Reset margin-right */
+             accent-color: var(--primary-color);
+             cursor: pointer;
+             transform: scale(1.1);
+         }
+
+         .options-list label {
+            flex-grow: 1;
+            cursor: pointer;
+         }
+
+        /* Styles for answered questions */
+        .options-list.answered li {
+            cursor: default;
+            pointer-events: none;
+             opacity: 0.8;
+        }
+        .options-list.answered li:hover {
+             background-color: var(--card-background);
+         }
+
+        .options-list li.correct {
+            background-color: #eafaf1;
+            border-color: var(--correct-color);
+            color: #1e8449;
+            font-weight: 500;
+        }
+
+        .options-list li.incorrect {
+            background-color: #fdedec;
+            border-color: var(--incorrect-color);
+            color: #c0392b;
+            font-weight: 500;
+        }
+
+
+        .feedback-section {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+             border-right-width: 5px; /* Adjusted for RTL */
+             border-right-style: solid;
+             border-left-width: 0; /* Reset left border */
+        }
+
+        .feedback-section.correct {
+            background-color: #eafaf1;
+            border-color: var(--correct-color); /* This sets the right border color */
+            color: #1e8449;
+        }
+
+        .feedback-section.incorrect {
+            background-color: #fdedec;
+            border-color: var(--incorrect-color); /* This sets the right border color */
+            color: #c0392b;
+        }
+
+        .feedback-section p {
+            margin: 0 0 5px 0;
+            font-weight: 600;
+        }
+        .feedback-section .explanation-title {
+            font-weight: 600;
+            display: block; /* Ensure it takes its own line if needed */
+             margin-bottom: 5px;
+        }
+        .feedback-section .explanation {
+            font-weight: 400;
+            font-size: 0.95em;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between; /* Stays the same, order changes with dir=rtl */
+            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            background-color: var(--primary-color);
+            color: var(--card-background);
+            min-width: 120px;
+             font-family: var(--font-family); /* Ensure button font */
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+         button:active {
+             transform: scale(0.98);
+         }
+
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        #btn-check {
+             background-color: var(--correct-color);
+        }
+         #btn-check:hover {
+              background-color: #27ae60;
+         }
+
+        #btn-view-all, #btn-view-single, #btn-submit-all, #btn-restart {
+             background-color: var(--secondary-color);
+        }
+         #btn-view-all:hover, #btn-view-single:hover, #btn-submit-all:hover, #btn-restart:hover {
+              background-color: #34495e;
+         }
+
+        /* View All Styles */
+        #all-questions-area .question-block {
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+             background-color: #fdfdfe;
+        }
+         #all-questions-area .question-block .question-title {
+             font-size: 1.1em;
+             margin-bottom: 15px;
+         }
+         #all-questions-area .options-list li {
+             padding: 10px 12px;
+             font-size: 0.95em;
+         }
+         #all-questions-area .feedback-section {
+             margin-top: 15px;
+             padding: 10px;
+             font-size: 0.9em;
+         }
+         #all-questions-area #btn-submit-all {
+             display: block; /* Make it block level */
+             width: 100%; /* Full width */
+             margin-top: 20px;
+             padding: 15px;
+             font-size: 1.1em;
+         }
+         /* Style for results summary in 'all' view */
+        #all-questions-area .final-results-summary {
+             margin-top: 30px;
+             padding: 20px;
+             border: 2px dashed var(--primary-color);
+             border-radius: var(--border-radius);
+             background-color: #eef7ff;
+             text-align: center;
+         }
+         #all-questions-area .final-results-summary h3 {
+             color: var(--primary-color);
+             margin-bottom: 10px;
+         }
+          #all-questions-area .final-results-summary p {
+             font-size: 1.1em;
+             font-weight: 500;
+         }
+         #all-questions-area .final-results-summary button {
+             margin-top: 15px;
+         }
+
+
+         #results-area { /* This is for the dedicated results page (after single view finish) */
+            text-align: center;
+            padding: 30px;
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            background-color: #eef7ff;
+         }
+          #results-area h2 {
+             color: var(--primary-color);
+             margin-bottom: 15px;
+         }
+          #results-area p {
+             font-size: 1.2em;
+             font-weight: 500;
+         }
+         #results-area button {
+            margin-top: 20px;
+         }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            header {
+                padding: 15px 20px;
+            }
+             header h1 {
+                 font-size: 1.5em;
+             }
+            main {
+                padding: 20px;
+            }
+             .exam-controls {
+                 padding: 10px 20px;
+                 /* Keep space-between, but allow wrapping */
+            }
+            .navigation-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+             button {
+                 width: 100%;
+                 box-sizing: border-box;
+             }
+        }
+    </style>
+</head>
+<body>
+    <div class="exam-container">
+        <header>
+            <h1>בחן מיקרוביולוגיה: מבנה התא</h1>
+        </header>
+
+        <div class="exam-controls">
+             <span class="progress-indicator" id="progress-indicator">שאלה 1 מתוך 30</span>
+             <button id="btn-view-all">הצג את כל השאלות</button>
+        </div>
+
+
+        <main>
+            <!-- Single Question View -->
+            <div id="question-area">
+                <h2 class="question-title" id="question-text"></h2>
+                <ul class="options-list" id="options-list">
+                    <!-- Options loaded here -->
+                </ul>
+                <div id="feedback-area">
+                    <!-- Feedback shown here -->
+                </div>
+            </div>
+
+            <!-- All Questions View -->
+            <div id="all-questions-area" class="hidden">
+                 <!-- All questions loaded here -->
+                 <!-- Submit button added dynamically by JS -->
+                 <!-- Results summary added dynamically by JS after submit -->
+            </div>
+
+            <!-- Results View (for end of single-view mode) -->
+             <div id="results-area" class="hidden">
+                 <h2>הבחן הושלם!</h2>
+                 <p id="score-text"></p>
+                 <button id="btn-restart">התחל בחן מחדש</button>
+             </div>
+
+            <!-- Navigation for Single View -->
+            <div class="navigation-buttons">
+                 <!-- Buttons appear in reverse order due to RTL -->
+                 <button id="btn-next">הבא / דלג</button>
+                 <button id="btn-check">בדוק תשובה</button>
+                 <button id="btn-prev" disabled>הקודם</button>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        const questions = [
+             {
+                 question: "מהו מאפיין עיקרי המבדיל תאים פרוקריוטים מתאים אאוקריוטים?",
+                 options: [
+                     "נוכחות ריבוזומים",
+                     "נוכחות ממברנת פלזמה",
+                     "היעדר גרעין תא מוקף ממברנה",
+                     "נוכחות DNA"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "לתאים פרוקריוטים אין גרעין מוקף ממברנה ואברונים אחרים מוקפי ממברנה, וזהו הבדל מרכזי מתאים אאוקריוטים. לשני סוגי התאים יש ריבוזומים, ממברנת פלזמה ו-DNA."
+             },
+             {
+                 question: "הממברנות הציטופלזמטיות של חיידקים (Bacteria) ואאוקריוטים (Eukarya) מכילות בעיקר חומצות שומן הקשורות לגליצרול באמצעות:",
+                 options: [
+                     "קשרים אתריים",
+                     "קשרים אסטריים",
+                     "קשרים פפטידיים",
+                     "קשרים גליקוזידיים"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "בחיידקים ובאאוקריוטים, ליפידי הממברנה כוללים בדרך כלל חומצות שומן המחוברות לגליצרול בקשרים אסטריים."
+             },
+             {
+                 question: "באיזו על-ממלכה (domain) של החיים קיימים ליפידי ממברנה עם גליצרול הקשור לשרשראות צד הידרופוביות באמצעות קשרים אתריים?",
+                 options: [
+                     "חיידקים (Bacteria)",
+                     "אאוקריוטים (Eukarya)",
+                     "ארכאה (Archaea)",
+                     "וירוסים (Viruses)"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "ארכאות הן ייחודיות בכך שליפידי הממברנה שלהן מכילים קשרים אתריים המחברים גליצרול לשרשראות צד נגזרות איזופרן (כמו פיטניל), התורמים ליציבותן בסביבות קיצוניות."
+             },
+             {
+                 question: "איזו מולקולה, דומה במבנה לסטרולים, נמצאת בממברנות של חיידקים רבים ונחשבת כמספקת יציבות?",
+                 options: [
+                     "כולסטרול",
+                     "ארגוסטרול",
+                     "הופנואידים",
+                     "פיטניל"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "הופנואידים הם מולקולות דמויות-סטרול הנמצאות בממברנות של מיני חיידקים רבים, ומאמינים שהן ממלאות תפקיד דומה לזה של כולסטרול באאוקריוטים על ידי השפעה על נזילות ויציבות הממברנה."
+             },
+             {
+                 question: "השכבה הקשיחה המספקת צורה והגנה אוסמוטית לרוב תאי החיידקים היא:",
+                 options: [
+                     "קפסולה (Capsule)",
+                     "שכבת S (S-layer)",
+                     "ממברנת הפלזמה",
+                     "דופן תא מפפטידוגליקן"
+                 ],
+                 correctAnswer: 3,
+                 explanation: "דופן התא מפפטידוגליקן היא השכבה המבנית העיקרית ברוב החיידקים, המקנה קשיחות ומונעת ליזיס (פירוק) בסביבות היפוטוניות."
+             },
+             {
+                 question: "פפטידוגליקן מורכב מיחידות חוזרות של:",
+                 options: [
+                     "גלוקוז ופרוקטוז",
+                     "N-אצטילגלוקוזאמין (NAG) וחומצה N-אצטילמורמית (NAM)",
+                     "חומצות אמינו בלבד",
+                     "חומצות שומן וגליצרול"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "שלד הגליקן של הפפטידוגליקן מורכב משיירים מתחלפים של N-אצטילגלוקוזאמין (NAG) וחומצה N-אצטילמורמית (NAM)."
+             },
+             {
+                 question: "איזה סוג קשר מחבר את יחידות הסוכר (NAG ו-NAM) בשלד הפפטידוגליקן?",
+                 options: [
+                     "קשר גליקוזידי בטא(1,4)",
+                     "קשר גליקוזידי אלפא(1,4)",
+                     "קשר אסטרי",
+                     "קשר פפטידי"
+                 ],
+                 correctAnswer: 0,
+                 explanation: "שיירי ה-NAG וה-NAM בפפטידוגליקן מקושרים בקשרים גליקוזידיים מסוג בטא(1,4). קשר ספציפי זה הוא המטרה של האנזים ליזוזים."
+             },
+             {
+                 question: "שרשראות קצרות של חומצות אמינו מחוברות לאיזה רכיב של הפפטידוגליקן?",
+                 options: [
+                     "N-אצטילגלוקוזאמין (NAG)",
+                     "חומצה N-אצטילמורמית (NAM)",
+                     "גם ל-NAG וגם ל-NAM באופן שווה",
+                     "לממברנת הפלזמה"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "שרשראות הצד הפפטידיות, החיוניות להצלבה (cross-linking), מחוברות לשיירי החומצה ה-N-אצטילמורמית (NAM) במבנה הפפטידוגליקן."
+             },
+             {
+                 question: "איזה מאפיין ייחודי לדופן התא של חיידקים גראם-חיוביים אך בדרך כלל נעדר או דק הרבה יותר בחיידקים גראם-שליליים?",
+                 options: [
+                     "ממברנה חיצונית",
+                     "ליפופוליסכריד (LPS)",
+                     "שכבת פפטידוגליקן עבה",
+                     "חלל פריפלזמטי"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "לחיידקים גראם-חיוביים יש שכבת פפטידוגליקן עבה, בעוד שלחיידקים גראם-שליליים יש שכבה דקה הרבה יותר הממוקמת בין הממברנה הפנימית והחיצונית."
+             },
+             {
+                 question: "ליפופוליסכריד (LPS), הידוע גם כאנדוטוקסין, הוא מרכיב עיקרי בממברנה החיצונית של:",
+                 options: [
+                     "חיידקים גראם-חיוביים",
+                     "חיידקים גראם-שליליים",
+                     "ארכאה",
+                     "פטריות"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "LPS הוא מאפיין מובהק של העלעל החיצוני (outer leaflet) של הממברנה החיצונית הנמצאת בחיידקים גראם-שליליים."
+             },
+             {
+                 question: "איזה אנזים מפרק באופן ספציפי את הקשרים הגליקוזידיים מסוג בטא(1,4) בפפטידוגליקן, וגורם לפירוק (ליזיס) התא?",
+                 options: [
+                     "עמילאז",
+                     "פרוטאז",
+                     "ליפאז",
+                     "ליזוזים"
+                 ],
+                 correctAnswer: 3,
+                 explanation: "ליזוזים, הנמצא בהפרשות כמו דמעות ורוק, תוקף ומפרק (הידרוליזה) את קשרי הבטא(1,4) בין NAG ו-NAM בשלד הפפטידוגליקן, ובכך מחליש את דופן התא."
+             },
+             {
+                 question: "איזו קבוצת חיידקים חסרה באופן טבעי דופן תא ומשלבת סטרולים (כמו כולסטרול) בממברנת התא שלה ליציבות?",
+                 options: [
+                     "ציאנובקטריה",
+                     "מיקופלזמות (Mycoplasmas)",
+                     "ספירוכטות",
+                     "אקטינובקטריה"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "מיקופלזמות הן ייחודיות בקרב החיידקים בהיעדר דופן תא. הן מפצות על כך על ידי שילוב סטרולים בממברנת הפלזמה שלהן, לעתים קרובות נרכשים מהפונדקאי שלהן, כדי לספק תמיכה מבנית."
+             },
+             {
+                 question: "לארכאות אין פפטידוגליקן. לחלקן יש מבנה דופן תא דומה תפקודית לפפטידוגליקן הנקרא:",
+                 options: [
+                     "כיטין",
+                     "תאית (צלולוז)",
+                     "פסאודופפטידוגליקן (פסאודומוראין)",
+                     "ליפופוליסכריד"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "פסאודופפטידוגליקן, הנמצא בחלק מהארכאות המייצרות מתאן, דומה לפפטידוגליקן אך שונה בהרכב הסוכרים שלו (חומצה N-אצטילטלוסאמינורונית במקום NAM) ובקשרים הגליקוזידיים (בטא(1,3)), מה שהופך אותו לעמיד לליזוזים."
+             },
+             {
+                 question: "שכבת ה-S (S-layer), הנמצאת בחלק מהחיידקים ובארכאות רבות, מורכבת בדרך כלל מ:",
+                 options: [
+                     "ליפידים",
+                     "תת-יחידות חלבוניות או גליקופרוטאיניות",
+                     "רב-סוכרים כמו תאית",
+                     "חומצות גרעין"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "שכבת ה-S (שכבת פני שטח) היא מערך גבישי המורכב מתת-יחידות של חלבון או גליקופרוטאין המתארגנות מעצמן על פני התא, מחוץ לפפטידוגליקן או לממברנה החיצונית (אם קיימת)."
+             },
+             {
+                 question: "איזה סוג של חומצות אמינו נמצא לעתים קרובות בקשרי ההצלבה הפפטידיים של הפפטידוגליקן החיידקי, שהן פחות נפוצות בחלבונים?",
+                 options: [
+                     "חומצות אמינו מסוג L",
+                     "חומצות אמינו מסוג D",
+                     "חומצות אמינו ארומטיות",
+                     "חומצות אמינו בסיסיות"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "הפפטידוגליקן החיידקי משלב לעתים קרובות איזומרים מסוג D של חומצות אמינו (למשל, D-אלנין, D-גלוטמט) בשרשראות הצד הפפטידיות ובקשרי ההצלבה, בניגוד לאיזומרים מסוג L הנמצאים באופן בלעדי בחלבונים."
+             },
+             {
+                 question: "האזור בתוך תא פרוקריוטי שבו ממוקם הכרומוזום נקרא:",
+                 options: [
+                     "גרעין (Nucleus)",
+                     "גרעינון (Nucleolus)",
+                     "נוקלאואיד (Nucleoid)",
+                     "פלסמיד (Plasmid)"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "הנוקלאואיד הוא האזור בעל הצורה הלא-סדורה בפרוקריוטים המכיל את החומר הגנטי העיקרי (הכרומוזום), ואינו מוקף בממברנה."
+             },
+             {
+                 question: "איזה מבנה אחראי בעיקר לחדירות בררנית (סלקטיבית), השולט במה שנכנס ויוצא מהתא?",
+                 options: [
+                     "דופן התא",
+                     "קפסולה",
+                     "ממברנת הפלזמה",
+                     "ריבוזום"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "ממברנת הפלזמה (או הממברנה הציטופלזמטית) פועלת כמחסום בררני, המווסת את מעבר החומרים אל תוך ומחוץ לציטופלזמה של התא."
+             },
+             {
+                 question: "חלק מממברנות הארכאה הן חד-שכבות ליפידיות (monolayers) ולא דו-שכבות (bilayers). הדבר מושג לעתים קרובות באמצעות שימוש ב:",
+                 options: [
+                     "הופנואידים",
+                     "דיגליצרול טטראאתרים (Diglycerol tetraethers)",
+                     "חומצות שומן קצרות-שרשרת",
+                     "כולסטרול"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "דיגליצרול טטראאתרים משתרעים על פני כל רוחב הממברנה, ויוצרים מבנה חד-שכבתי קשיח הנמצא בחלק מהארכאות התרמופיליות (אוהבות חום), היציב יותר בטמפרטורות גבוהות מאשר דו-שכבה טיפוסית."
+             },
+             {
+                 question: "חומצה דיאמינופימלית (DAP) היא חומצת אמינו הנמצאת בפפטידוגליקן של:",
+                 options: [
+                     "כל החיידקים",
+                     "חיידקים גראם-שליליים רבים",
+                     "חיידקים גראם-חיוביים (בדרך כלל מוחלפת בליזין)",
+                     "גם ב' וגם ג'"
+                 ],
+                 correctAnswer: 3, // Often DAP in G-, Lysine in G+ Staph, but DAP in some G+ like Bacillus
+                 explanation: "DAP נפוצה בשרשראות הצד הפפטידיות של פפטידוגליקן בחיידקים גראם-שליליים ובחלק מהגראם-חיוביים (כמו Bacillus), בעוד שגראם-חיוביים אחרים (כמו Staphylococcus) משתמשים לעתים קרובות ב-L-ליזין בעמדה זו."
+             },
+             {
+                 question: "האם ארכאות רגישות בדרך כלל לפניצילין ולאנטיביוטיקות קשורות הפוגעות בסינתזת פפטידוגליקן?",
+                 options: [
+                     "כן, הן רגישות מאוד.",
+                     "לא, מכיוון שאין להן פפטידוגליקן.",
+                     "כן, אבל רק בריכוזים גבוהים.",
+                     "רק ארכאות החיות בסביבות מתונות רגישות."
+                 ],
+                 correctAnswer: 1,
+                 explanation: "פניצילין פוגע באנזימים המעורבים בהצלבת הפפטידוגליקן. מכיוון שלאראכות אין פפטידוגליקן, הן עמידות באופן מובנה לפניצילין ולאנטיביוטיקות דומות הפועלות במסלול זה."
+             },
+             {
+                 question: "איזה מרכיב בממברנה החיצונית של חיידקים גראם-שליליים אחראי להשפעותיו הרעילות (אנדוטוקסין)?",
+                 options: [
+                     "פורינים",
+                     "פפטידוגליקן",
+                     "חלק ה-Lipid A של ה-LPS",
+                     "ליפופרוטאין מוראין"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "רכיב ה-Lipid A, המשובץ בחלק של הליפופוליסכריד (LPS) הפונה לממברנה החיצונית, הוא האנדוטוקסין, האחראי לגרימת חום והלם במהלך זיהומים הנגרמים על ידי חיידקים גראם-שליליים."
+             },
+             {
+                 question: "חומצות טייכואיות (Teichoic acids) וליפוטייכואיות (lipoteichoic acids) הן פולימרים הנמצאים בקשר עם דופן התא של:",
+                 options: [
+                     "חיידקים גראם-שליליים",
+                     "חיידקים גראם-חיוביים",
+                     "ארכאה",
+                     "מיקופלזמות"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "חומצות טייכואיות (הקשורות לפפטידוגליקן) וחומצות ליפוטייכואיות (הקשורות לליפידי הממברנה) הן מרכיבים אופייניים של מעטפת התא העבה של חיידקים גראם-חיוביים."
+             },
+             {
+                 question: "הזנבות ההידרופוביים של פוספוליפידים בממברנות חיידקיות מורכבים בדרך כלל מ:",
+                 options: [
+                     "יחידות איזופרן",
+                     "חומצות שומן",
+                     "חומצות אמינו",
+                     "טבעות סטרואידיות"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "בחיידקים (ובאאוקריוטים), הזנבות ההידרופוביים של פוספוליפידי הממברנה מורכבים בדרך כלל משרשראות של חומצות שומן."
+             },
+             {
+                 question: "בהשוואה לתאים אאוקריוטים, תאים פרוקריוטים הם בדרך כלל:",
+                 options: [
+                     "גדולים יותר ומורכבים יותר",
+                     "קטנים יותר ופשוטים יותר במבנם",
+                     "שווים בגודלם אך חסרי אברונים",
+                     "גדולים יותר אך חסרי דופן תא"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "תאים פרוקריוטים הם בדרך כלל קטנים הרבה יותר (למשל, 0.1-5 מיקרומטר) וחסרים את האברונים הפנימיים המורכבים ומוקפי הממברנה הנמצאים בתאים אאוקריוטים (למשל, 10-100 מיקרומטר)."
+             },
+             {
+                 question: "התהליך שבו תא חיידקי מאבד את דופן התא שלו אך נשאר שלם במדיום איזוטוני נקרא יצירת:",
+                 options: [
+                     "אנדוספור (נבג פנימי)",
+                     "קפסולה",
+                     "פרוטופלסט (או ספרופלסט אם הממברנה החיצונית נשארת)",
+                     "ביופילם"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "כאשר דופן הפפטידוגליקן מוסרת (למשל, על ידי ליזוזים), התא הנותר, המוקף רק בממברנת הפלזמה, נקרא פרוטופלסט (מחיידק גראם-חיובי) או ספרופלסט (מחיידק גראם-שלילי, שומר על הממברנה החיצונית). הוא רגיש לשינויים אוסמוטיים."
+             },
+             {
+                 question: "באילו על-ממלכות (domains) של החיים קיימים אורגניזמים עם ריבוזומים מסוג 70S?",
+                 options: [
+                     "חיידקים בלבד",
+                     "ארכאה בלבד",
+                     "אאוקריוטים בלבד",
+                     "חיידקים וארכאה"
+                 ],
+                 correctAnswer: 3,
+                 explanation: "גם לחיידקים וגם לארכאות יש ריבוזומים מסוג 70S (המורכבים מתת-יחידות 50S ו-30S), בעוד שהציטופלזמה של אאוקריוטים מכילה ריבוזומים מסוג 80S (תת-יחידות 60S ו-40S). גם למיטוכונדריה ולכלורופלסטים באאוקריוטים יש ריבוזומים מסוג 70S."
+             },
+             {
+                 question: "מהו התפקיד העיקרי של ריבוזומים?",
+                 options: [
+                     "ייצור אנרגיה (סינתזת ATP)",
+                     "סינתזת חלבונים (תרגום)",
+                     "שכפול DNA",
+                     "סינתזת ליפידים"
+                 ],
+                 correctAnswer: 1,
+                 explanation: "הריבוזומים הם המנגנון התאי האחראי לתרגום הקוד הגנטי הנישא על ידי RNA שליח (mRNA) לחלבונים."
+             },
+             {
+                 question: "העץ הפילוגנטי המוצג בשיעור (כמו איור 1.1) ממחיש כי:",
+                 options: [
+                     "חיידקים וארכאה קרובים יותר זה לזה מאשר לאאוקריוטים.",
+                     "לארכאה ולאאוקריוטים יש אב קדמון משותף מאוחר יותר מאשר לכל אחד מהם עם החיידקים.",
+                     "כל שלוש העל-ממלכות התפתחו באופן עצמאי.",
+                     "אאוקריוטים התפתחו ישירות מחיידקים."
+                 ],
+                 correctAnswer: 1,
+                 explanation: "עצים פילוגנטיים סטנדרטיים המבוססים על רצפי rRNA מראים כי הארכאה והאאוקריוטים הסתעפו מאב קדמון משותף לאחרונה יותר מאשר ההסתעפות של שושלת החיידקים, מה שמצביע על קשר אבולוציוני קרוב יותר בין ארכאה ואאוקריוטים."
+             },
+             {
+                 question: "פסאודופפטידוגליקן הנמצא בחלק מהארכאות עמיד לליזוזים מכיוון שהוא מכיל:",
+                 options: [
+                     "קשרים גליקוזידיים בטא(1,4)",
+                     "חומצה N-אצטילמורמית (NAM)",
+                     "חומצות אמינו מסוג D",
+                     "קשרים גליקוזידיים בטא(1,3) וחומצה N-אצטילטלוסאמינורונית"
+                 ],
+                 correctAnswer: 3,
+                 explanation: "ליזוזים פוגע באופן ספציפי בקשרי בטא(1,4) בין NAG ו-NAM. לפסאודופפטידוגליקן יש קשרי בטא(1,3) והוא מחליף את NAM בחומצה N-אצטילטלוסאמינורונית, מה שהופך אותו לעמיד לפעולת הליזוזים."
+             },
+             {
+                 question: "הובלת מולקולות דרך ממברנת הפלזמה כנגד מפל הריכוזים שלהן דורשת בדרך כלל:",
+                 options: [
+                     "דיפוזיה פשוטה",
+                     "דיפוזיה מסויעת (Facilitated diffusion)",
+                     "הובלה פעילה (תוך שימוש באנרגיה)",
+                     "אוסמוזה"
+                 ],
+                 correctAnswer: 2,
+                 explanation: "מנגנוני הובלה פעילה משתמשים באנרגיה (כמו ATP או כוח מניע פרוטונים) כדי להעביר מומסים דרך הממברנה כנגד מפל ריכוזים או מפל אלקטרוכימי."
+             }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let score = 0;
+        let viewingAll = false;
+        let questionsAnswered = new Array(questions.length).fill(false); // Track if feedback was given for a question
+
+
+        const questionArea = document.getElementById('question-area');
+        const allQuestionsArea = document.getElementById('all-questions-area');
+        const resultsArea = document.getElementById('results-area');
+        const questionText = document.getElementById('question-text');
+        const optionsList = document.getElementById('options-list');
+        const feedbackArea = document.getElementById('feedback-area');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const navigationButtonsContainer = document.querySelector('.navigation-buttons');
+        const examControlsContainer = document.querySelector('.exam-controls');
+
+
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnCheck = document.getElementById('btn-check');
+        // View All/Single button is handled dynamically
+        const btnRestart = document.getElementById('btn-restart');
+
+
+        function displayQuestion(index) {
+            if (index < 0 || index >= questions.length) return;
+
+            const question = questions[index];
+            questionText.textContent = question.question;
+            optionsList.innerHTML = '';
+            optionsList.className = 'options-list';
+            feedbackArea.innerHTML = '';
+
+            question.options.forEach((option, i) => {
+                const li = document.createElement('li');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `question-${index}`;
+                input.id = `option-${index}-${i}`;
+                input.value = i;
+                input.disabled = questionsAnswered[index]; // Disable if already answered
+
+                const label = document.createElement('label');
+                label.htmlFor = `option-${index}-${i}`;
+                label.textContent = option;
+
+                li.appendChild(input);
+                li.appendChild(label);
+
+                li.addEventListener('click', (e) => {
+                    if (!questionsAnswered[index]) {
+                        input.checked = true;
+                        userAnswers[index] = i;
+                        btnCheck.disabled = false;
+                    }
+                });
+
+                if (userAnswers[index] === i) {
+                    input.checked = true;
+                }
+
+                optionsList.appendChild(li);
+            });
+
+             if (questionsAnswered[index]) {
+                 showFeedback(index, false); // Show feedback, don't increment score again
+                 optionsList.classList.add('answered');
+                 btnCheck.disabled = true;
+             } else {
+                btnCheck.disabled = userAnswers[index] === null;
+             }
+
+
+            progressIndicator.textContent = `שאלה ${index + 1} מתוך ${questions.length}`;
+            updateNavigationButtons();
+        }
+
+        function updateNavigationButtons() {
+            btnPrev.disabled = currentQuestionIndex === 0;
+             // Disable next only if it's the last question AND it has been answered
+            btnNext.disabled = currentQuestionIndex === questions.length - 1 && questionsAnswered[currentQuestionIndex];
+
+            if (viewingAll) {
+                 navigationButtonsContainer.classList.add('hidden');
+             } else {
+                  navigationButtonsContainer.classList.remove('hidden');
+                  // Check button state depends on whether current question is answered
+                 btnCheck.disabled = questionsAnswered[currentQuestionIndex] || userAnswers[currentQuestionIndex] === null;
+             }
+        }
+
+        function checkAnswer() {
+            const selectedOptionIndex = userAnswers[currentQuestionIndex];
+            if (selectedOptionIndex === null || questionsAnswered[currentQuestionIndex]) return;
+
+            const wasCorrect = showFeedback(currentQuestionIndex, true); // Show feedback and potentially update score
+            questionsAnswered[currentQuestionIndex] = true; // Mark as answered *after* feedback
+            optionsList.classList.add('answered');
+            btnCheck.disabled = true;
+             btnNext.disabled = currentQuestionIndex === questions.length - 1; // Re-evaluate next button after answering
+             updateNavigationButtons(); // Update states
+        }
+
+        function showFeedback(index, updateScore = false) {
+             const question = questions[index];
+             const selectedOptionIndex = userAnswers[index];
+             const correct = selectedOptionIndex === question.correctAnswer;
+             let feedbackTargetArea = feedbackArea; // Default to single view feedback area
+
+             // If in 'all' view, find the specific feedback div for this question
+             if (viewingAll) {
+                const feedbackAllDiv = document.getElementById(`feedback-all-${index}`);
+                if(feedbackAllDiv) feedbackTargetArea = feedbackAllDiv;
+             }
+
+             feedbackTargetArea.innerHTML = '';
+             const feedbackDiv = document.createElement('div');
+             feedbackDiv.classList.add('feedback-section');
+
+            const resultText = document.createElement('p');
+             const explanationTitle = document.createElement('span');
+             explanationTitle.classList.add('explanation-title');
+             explanationTitle.textContent = 'הסבר:';
+            const explanationText = document.createElement('span');
+            explanationText.classList.add('explanation');
+            explanationText.innerHTML = question.explanation; // Hebrew explanation
+
+             let isCorrect = false;
+             if (selectedOptionIndex === null) { // Case for 'Submit All' with unanswered questions
+                  feedbackDiv.classList.add('incorrect');
+                  resultText.textContent = 'לא נענתה.';
+             } else if (correct) {
+                 feedbackDiv.classList.add('correct');
+                 resultText.textContent = 'נכון!';
+                  if (updateScore) score++; // Only increment score if called from checkAnswer or submitAll first time
+                 isCorrect = true;
+             } else {
+                 feedbackDiv.classList.add('incorrect');
+                  resultText.textContent = `לא נכון.`;
+             }
+
+              feedbackDiv.appendChild(resultText);
+              feedbackDiv.appendChild(explanationTitle);
+             feedbackDiv.appendChild(explanationText);
+             feedbackTargetArea.appendChild(feedbackDiv);
+              feedbackTargetArea.classList.remove('hidden'); // Make sure it's visible in 'all' view
+
+             // Visually mark the options list (if target is the single view list)
+             if (feedbackTargetArea === feedbackArea) { // Only for single view
+                 const optionsItems = optionsList.querySelectorAll('li');
+                 optionsItems.forEach((li, i) => {
+                      const input = li.querySelector('input[type="radio"]');
+                      input.disabled = true;
+                     if (i === question.correctAnswer) {
+                         li.classList.add('correct');
+                     } else if (i === selectedOptionIndex && !correct) {
+                         li.classList.add('incorrect');
+                     }
+                 });
+             }
+             // In 'all' view, options highlighting happens in submitAll function directly
+
+             return isCorrect; // Return if the answer was correct
+        }
+
+        function nextQuestion() {
+            // Check if all questions are answered (for single view mode)
+            const allAnswered = questionsAnswered.every(answered => answered);
+
+             if (currentQuestionIndex < questions.length - 1) {
+                 currentQuestionIndex++;
+                 displayQuestion(currentQuestionIndex);
+             } else if (currentQuestionIndex === questions.length - 1 && questionsAnswered[currentQuestionIndex]) {
+                  // If it's the last question and it's answered, show results
+                 showResults();
+             }
+             // If it's the last question but not answered, stay here. User needs to click Check.
+        }
+
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+
+        function toggleView() {
+             viewingAll = !viewingAll;
+             const viewButton = document.getElementById('btn-view-all') || document.getElementById('btn-view-single');
+
+             if (viewingAll) {
+                 questionArea.classList.add('hidden');
+                 resultsArea.classList.add('hidden');
+                 allQuestionsArea.classList.remove('hidden');
+                 viewButton.textContent = 'הצג שאלה בודדת';
+                 viewButton.id = 'btn-view-single';
+                 navigationButtonsContainer.classList.add('hidden');
+                 displayAllQuestions();
+             } else {
+                 questionArea.classList.remove('hidden');
+                 allQuestionsArea.classList.add('hidden');
+                 resultsArea.classList.add('hidden');
+                 viewButton.textContent = 'הצג את כל השאלות';
+                 viewButton.id = 'btn-view-all';
+                 // Only show navigation buttons if exam is not finished
+                  if (!resultsArea.classList.contains('hidden')) {
+                    navigationButtonsContainer.classList.add('hidden');
+                  } else {
+                     navigationButtonsContainer.classList.remove('hidden');
+                  }
+                 displayQuestion(currentQuestionIndex); // Refresh current question view
+             }
+             updateNavigationButtons(); // Update button states based on view
+        }
+
+         function displayAllQuestions() {
+             allQuestionsArea.innerHTML = ''; // Clear previous content
+             let isAnySubmitted = false; // Check if submit button was already pressed
+
+             questions.forEach((question, index) => {
+                 const block = document.createElement('div');
+                 block.classList.add('question-block');
+                 block.id = `q-block-${index}`;
+
+                 const title = document.createElement('h3');
+                 title.classList.add('question-title');
+                 title.textContent = `${index + 1}. ${question.question}`;
+                 block.appendChild(title);
+
+                 const optsList = document.createElement('ul');
+                 optsList.classList.add('options-list');
+                  if (questionsAnswered[index]) { // If answered previously (in single or all view)
+                      optsList.classList.add('answered');
+                      isAnySubmitted = true; // Indicate that we might need to show results summary later
+                  }
+
+                 question.options.forEach((option, i) => {
+                     const li = document.createElement('li');
+                     const input = document.createElement('input');
+                     input.type = 'radio';
+                     input.name = `all-question-${index}`;
+                     input.id = `all-option-${index}-${i}`;
+                     input.value = i;
+                     input.disabled = questionsAnswered[index]; // Disable if already evaluated
+
+                     const label = document.createElement('label');
+                     label.htmlFor = `all-option-${index}-${i}`;
+                     label.textContent = option;
+
+                     li.appendChild(input);
+                     li.appendChild(label);
+
+                     // Update userAnswers array on click *if not already answered*
+                      if (!questionsAnswered[index]) {
+                          li.addEventListener('click', () => {
+                              if (!input.disabled) { // Double check it's not disabled
+                                 input.checked = true;
+                                 userAnswers[index] = i;
+                              }
+                          });
+                      }
+
+                     // Restore checked state
+                     if(userAnswers[index] === i) {
+                         input.checked = true;
+                     }
+                     // Apply correct/incorrect styling if already answered
+                     if (questionsAnswered[index]) {
+                         if (i === question.correctAnswer) {
+                             li.classList.add('correct');
+                         } else if (i === userAnswers[index] && userAnswers[index] !== question.correctAnswer) {
+                             li.classList.add('incorrect');
+                         }
+                     }
+
+                     optsList.appendChild(li);
+                 });
+                 block.appendChild(optsList);
+
+                 // Add feedback area for this question
+                 const feedbackDiv = document.createElement('div');
+                 feedbackDiv.id = `feedback-all-${index}`;
+                  // Show feedback immediately if already answered
+                 if (questionsAnswered[index]) {
+                     showFeedback(index, false); // Display existing feedback, don't update score
+                     feedbackDiv.innerHTML = document.getElementById(`feedback-all-${index}`).innerHTML; // Clone feedback content
+                      feedbackDiv.classList.remove('hidden');
+                  } else {
+                       feedbackDiv.classList.add('feedback-section', 'hidden');
+                  }
+                 block.appendChild(feedbackDiv);
+
+
+                 allQuestionsArea.appendChild(block);
+             });
+
+             // Add the submit button *only if* not all questions have been submitted yet
+             if (!questionsAnswered.every(a => a)) {
+                 const submitAllBtn = document.createElement('button');
+                 submitAllBtn.id = 'btn-submit-all';
+                 submitAllBtn.textContent = 'הגש את כל התשובות';
+                 submitAllBtn.addEventListener('click', submitAll);
+                 allQuestionsArea.appendChild(submitAllBtn);
+             } else {
+                  // If all questions were already answered (e.g. via single view), show results summary directly
+                  addResultsSummaryToAllView();
+             }
+        }
+
+         function submitAll() {
+             score = 0; // Reset score before recalculating based on current selections
+             questions.forEach((question, index) => {
+                 const block = document.getElementById(`q-block-${index}`);
+                 if (!block) return; // Safety check
+
+                 const optsList = block.querySelector('.options-list');
+                 const feedbackDiv = document.getElementById(`feedback-all-${index}`);
+
+                 // Find selected answer ONLY if not already answered
+                 if (!questionsAnswered[index]) {
+                     const selectedInput = optsList.querySelector(`input[name="all-question-${index}"]:checked`);
+                     userAnswers[index] = selectedInput ? parseInt(selectedInput.value) : null;
+                 }
+
+                  // Now evaluate feedback and update score *if it's the first time answering this question*
+                 if (!questionsAnswered[index]) {
+                     showFeedback(index, true); // Show feedback, DO update score
+                     questionsAnswered[index] = true; // Mark as answered now
+                 } else {
+                      // If already answered, ensure feedback is visible but don't re-score
+                      showFeedback(index, false);
+                 }
+
+
+                 // Disable options and highlight correct/incorrect for this block
+                 optsList.classList.add('answered');
+                 const optionsItems = optsList.querySelectorAll('li');
+                 optionsItems.forEach((li, i) => {
+                     const input = li.querySelector('input[type="radio"]');
+                     input.disabled = true;
+                     // Clear previous styling before applying new one
+                     li.classList.remove('correct', 'incorrect');
+                     if (i === question.correctAnswer) {
+                         li.classList.add('correct');
+                     } else if (i === userAnswers[index] && userAnswers[index] !== question.correctAnswer) {
+                         li.classList.add('incorrect');
+                     }
+                 });
+             });
+
+             // Hide submit button after submission
+             const submitBtn = document.getElementById('btn-submit-all');
+             if (submitBtn) submitBtn.classList.add('hidden');
+
+             // Add the results summary at the end of the 'all questions' area
+             addResultsSummaryToAllView();
+         }
+
+         function addResultsSummaryToAllView() {
+              // Remove existing summary if present
+              const existingSummary = allQuestionsArea.querySelector('.final-results-summary');
+              if (existingSummary) existingSummary.remove();
+
+             // Create summary div
+             const summaryDiv = document.createElement('div');
+             summaryDiv.classList.add('final-results-summary');
+
+             const summaryTitle = document.createElement('h3');
+             summaryTitle.textContent = 'סיכום הבחן';
+             summaryDiv.appendChild(summaryTitle);
+
+              const finalScoreText = document.createElement('p');
+              const percentage = questions.length > 0 ? ((score / questions.length) * 100).toFixed(1) : 0;
+             finalScoreText.textContent = `הציון שלך הוא ${score} מתוך ${questions.length} (${percentage}%)`;
+             summaryDiv.appendChild(finalScoreText);
+
+              const restartBtnAllView = document.createElement('button');
+             restartBtnAllView.textContent = 'התחל בחן מחדש';
+             restartBtnAllView.addEventListener('click', restartExam);
+             summaryDiv.appendChild(restartBtnAllView);
+
+             allQuestionsArea.appendChild(summaryDiv);
+         }
+
+        function showResults() { // Used primarily when finishing in single-view mode
+             questionArea.classList.add('hidden');
+             allQuestionsArea.classList.add('hidden');
+             resultsArea.classList.remove('hidden');
+             navigationButtonsContainer.classList.add('hidden');
+             examControlsContainer.classList.add('hidden');
+
+             const scoreText = document.getElementById('score-text');
+             const percentage = questions.length > 0 ? ((score / questions.length) * 100).toFixed(1) : 0;
+             scoreText.textContent = `הציון שלך הוא ${score} מתוך ${questions.length} (${percentage}%)`;
+        }
+
+         function restartExam() {
+             currentQuestionIndex = 0;
+             userAnswers.fill(null);
+             questionsAnswered.fill(false);
+             score = 0;
+             viewingAll = false;
+
+             resultsArea.classList.add('hidden');
+             allQuestionsArea.classList.add('hidden');
+             questionArea.classList.remove('hidden');
+             navigationButtonsContainer.classList.remove('hidden');
+             examControlsContainer.classList.remove('hidden');
+
+             // Ensure the view toggle button is reset correctly
+             const viewButton = document.getElementById('btn-view-single') || document.getElementById('btn-view-all');
+             viewButton.textContent = 'הצג את כל השאלות';
+             viewButton.id = 'btn-view-all';
+             viewButton.removeEventListener('click', toggleView); // Remove old listener if any
+             viewButton.addEventListener('click', toggleView); // Add fresh listener
+
+              // Clear any results summary from 'all view' area if it exists
+             const existingSummary = allQuestionsArea.querySelector('.final-results-summary');
+             if (existingSummary) existingSummary.remove();
+
+
+             displayQuestion(0);
+         }
+
+
+        // Event Listeners
+        btnNext.addEventListener('click', nextQuestion);
+        btnPrev.addEventListener('click', prevQuestion);
+        btnCheck.addEventListener('click', checkAnswer);
+         // Attach listener to the container for the potentially changing view button
+         examControlsContainer.addEventListener('click', (e) => {
+             if (e.target.id === 'btn-view-all' || e.target.id === 'btn-view-single') {
+                 toggleView();
+             }
+         });
+         btnRestart.addEventListener('click', restartExam);
+
+
+        // Initial Load
+        displayQuestion(currentQuestionIndex);
+
+    </script>
+</body>
+</html>
